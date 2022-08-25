@@ -58,30 +58,31 @@ int main(int argc, char **argv)
 	int sample_val;
 	float voltage_scale;
 	char *dev_dir;
-	int dev_num = 0;
-    int channel = 0;
-	const char *family = "apalis"; //colibri or verdin
 
-	if (&family == "colibri") {
-		if ( asprintf(&dev_dir, "/dev/%s-ain%d", family ,channel) < 0 ) 
-		{
-			printf("%d: Failed to allocate memory\n", __LINE__);
-			free(dev_dir);
-			return -1;
-		}
-	}else{
-		if ( asprintf(&dev_dir, "/dev/%s-adc%d", family ,channel) < 0 ) 
-		{
-			printf("%d: Failed to allocate memory\n", __LINE__);
-			free(dev_dir);
-			return -1;
+	argv[2] = atoi(argv[2]);
+
+    if(argc < 3){
+        printf("Error! No family or ADC bus\n");
+        exit(-1);
+    }else{
+		if (&argv[1] == "colibri") {
+			if ( asprintf(&dev_dir, "/dev/%s-ain%d", argv[1] ,argv[2]) < 0 ) 
+			{
+				printf("%d: Failed to allocate memory\n", __LINE__);
+				free(dev_dir);
+				return -1;
+			}
+		}else{
+			if ( asprintf(&dev_dir, "/dev/%s-adc%d", argv[1] ,argv[2]) < 0 ) {
+				printf("%d: Failed to allocate memory\n", __LINE__);
+				free(dev_dir);
+				return -1;
+			}
 		}
 	}
 
-
 	sample_val = adc_read(dev_dir);
-	if (sample_val < 0)
-	{
+	if (sample_val < 0){
 		free(dev_dir);
 		return -1;
 	}
